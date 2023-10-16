@@ -11,8 +11,7 @@
 # imports
 from engine import Engine
 
-def main() -> None:
-    game = Engine()
+def main() -> None: Engine()
 
 if __name__ == '__main__':
     main()

@@ -112,6 +112,13 @@ class Engine:
         display.update()
 
     def run_game(self) -> None:
+        '''
+        Main function that runs the tic-tac-toe game.
+
+        Parameters: None
+
+        Returns: None
+        '''
         self.draw_grid()
         while True:
             for event in pygame.event.get():
