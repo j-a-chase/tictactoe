@@ -47,6 +47,9 @@ class Engine:
 
         # initialize fonts
         self.text_font = pygame.font.SysFont('timesnewroman', 15)
+
+        # start game
+        self.run_game()
     
     def __str__(self) -> str:
         '''
@@ -72,3 +75,51 @@ class Engine:
             - A string explaining the Engine class object
         '''
         return f'{__class__}\n{self.__str__()}'
+    
+    def clear_screen(self) -> None:
+        '''
+        Paints the screen the color of the background.
+
+        Parameters: None
+
+        Returns: None
+        '''
+        self.window.fill(self.BG_COLOR)
+        display.update()
+
+    def draw_grid(self) -> None:
+        '''
+        Draws the tic-tac-toe grid on screen
+
+        Parameters: None
+
+        Returns: None
+        '''
+        self.clear_screen()
+        pygame.draw.line(self.window, self.BOARD_COLOR,
+                            (self.width * 3 // 12, self.height * 5 // 12),
+                            (self.width * 9 // 12, self.height * 5 // 12), 7)
+        pygame.draw.line(self.window, self.BOARD_COLOR,
+                            (self.width * 3 // 12, self.height * 7 // 12),
+                            (self.width * 9 // 12, self.height * 7 // 12), 7)
+        pygame.draw.line(self.window, self.BOARD_COLOR,
+                            (self.width * 5 // 12, self.height * 3 // 12),
+                            (self.width * 5 // 12, self.height * 9 // 12), 7)
+        pygame.draw.line(self.window, self.BOARD_COLOR,
+                            (self.width * 7 // 12, self.height * 3 // 12),
+                            (self.width * 7 // 12, self.height * 9 // 12), 7)
+        
+        display.update()
+
+    def run_game(self) -> None:
+        self.draw_grid()
+        while True:
+            for event in pygame.event.get():
+                # if application is closed
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit(0)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit(0)
