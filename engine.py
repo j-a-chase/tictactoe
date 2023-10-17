@@ -11,7 +11,7 @@
 # imports
 import pygame
 from pygame import display
-from typing import Tuple
+from typing import Tuple, List
 
 class Engine:
     def __init__(self, width: int = 600, height: int = 600) -> None:
@@ -121,6 +121,8 @@ class Engine:
         Parameters:
             - x: integer containing the x-value for where the mouse was clicked
             - y: integer containing the y-value for where the mouse was clicked
+            - width: integer containing the width of the screen
+            - height: integer containing the height of the screen
 
         Returns:
             - a tuple containing the corresponding indices for the board list
@@ -215,7 +217,31 @@ class Engine:
         # change who's turn it is and update display
         self.turn = not self.turn
         display.update()
-        
+
+    def is_win(self, board: List[List[str]]) -> bool:
+        '''
+        Determines if the game has been won by either the X's or O's
+
+        Parameters:
+            - board: a list containing strings indicating the position of the X's and O's
+
+        Returns:
+            - a boolean value indicating if there is a win or not
+        '''
+        # check rows
+        for row in board:
+            if row[0] == row[1] == row[2] and row[0] is not None: return True
+
+        # check columns
+        for col in range(3):
+            if board[0][col] == board[1][col] == board[2][col] and board[0][col] is not None: return True
+
+        # check both diagonals
+        if board[0][0] == board[1][1] == board[2][2] and board[0][0] is not None: return True
+        if board[2][0] == board[1][1] == board[0][2] and board[2][0] is not None: return True
+
+        # no win
+        return False
 
     def run_game(self) -> None:
         '''
@@ -242,14 +268,18 @@ class Engine:
                     # get coordinates of the click
                     x, y = pygame.mouse.get_pos()
 
-                    # if coordinates are outside of the grid, ignore
-                    if x < 150 or x > 450 or y < 150 or y > 450: continue
+                    # if click inside grid
+                    if self.w // 4 <= x <= self.w * 3 // 4 and self.h // 4 <= y <= self.h * 3 // 4:
+                        # get coordinates in grid from click
+                        coords = self.calculate_coordinates(x, y, self.w, self.h)
 
-                    # get coordinates in grid from click
-                    coords = self.calculate_coordinates(x, y, self.w, self.h)
-
-                    # if that square isn't already occupied, draw the necessary shape.
-                    if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
+                        # if that square isn't already occupied, draw the necessary shape.
+                        if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
+            
+            if self.is_win(self.board):
+                self.win_screen()
+            elif self.is_tie():
+                self.tie_screen()
 
 if __name__ == '__main__':
     assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
