@@ -112,6 +112,9 @@ class Engine:
                             (self.w * 7 // 12, self.h * 3 // 12),
                             (self.w * 7 // 12, self.h * 9 // 12), 7)
         
+        instruction_text = self.text_font.render('Click to place X or O - Q to quit', 1, self.TEXT_COLOR)
+        self.window.blit(instruction_text, (self.w // 3, self.h * 5 // 6))
+        
         display.update()
 
     def calculate_coordinates(self, x: int, y: int, width: int, height: int) -> Tuple:
@@ -242,6 +245,12 @@ class Engine:
 
         # no win
         return False
+    
+    def win_screen(self) -> None: pass
+
+    def is_tie(self) -> bool: pass
+
+    def tie_screen(self) -> None: pass
 
     def run_game(self) -> None:
         '''
@@ -276,10 +285,8 @@ class Engine:
                         # if that square isn't already occupied, draw the necessary shape.
                         if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
             
-            if self.is_win(self.board):
-                self.win_screen()
-            elif self.is_tie():
-                self.tie_screen()
+            if self.is_win(self.board): self.win_screen()
+            elif self.is_tie(): self.tie_screen()
 
 if __name__ == '__main__':
     assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
