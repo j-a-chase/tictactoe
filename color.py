@@ -25,10 +25,12 @@ def get_color(color: str) -> Tuple:
         'BLUE': (0, 0, 255),
         'WHITE': (255, 255, 255),
         'BLACK': (0, 0, 0),
-        'ORANGE': (255, 165, 0)
+        'ORANGE': (255, 165, 0),
+        'DARKGREY': (50, 50, 50)
     }
 
-    return known_colors[color] if color.upper() in known_colors else (-1, -1, -1)
+    color = color.upper()
+    return known_colors[color] if color in known_colors else (-1, -1, -1)
 
 def get_random_color() -> Tuple:
     '''
