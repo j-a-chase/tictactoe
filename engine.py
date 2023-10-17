@@ -11,7 +11,8 @@
 # imports
 import pygame
 from pygame import display
-from typing import Tuple, List
+from typing import Tuple
+from win32gui import SetWindowPos
 
 import color
 from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move
@@ -47,6 +48,9 @@ class Engine:
         # initialize display assets
         self.window = display.set_mode((width, height))
         display.set_caption('Tic-Tac-Toe')
+
+        # ensure the pygame window is brought to the front upon completion of the input command in main.py
+        SetWindowPos(display.get_wm_info()['window'], -1, display.Info().current_w, display.Info().current_h // 4, 0, 0, 1)
 
         # initialize fonts
         self.text_font = pygame.font.SysFont('timesnewroman', 15)
