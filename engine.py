@@ -226,9 +226,9 @@ class Engine:
         self.turn = not self.turn
         symbol = 'X' if self.turn else 'O'
         turn_text = self.turn_font.render(f'{symbol}\'s turn.', 1, self.TEXT_COLOR)
-        self.window.fill(self.BG_COLOR, pygame.Rect(self.w * 5 // 12, self.h // 6, self.w // 8, self.h // 24))
+        self.window.fill(self.BG_COLOR, pygame.Rect(self.w * 5 // 12, self.h // 6, self.w // 6, self.h // 24))
         self.window.blit(turn_text, (self.w * 5 // 12 + (self.w // 60), self.h // 6))
-        
+
         display.update()
 
     def is_win(self, board: List[List[str]]) -> bool:
@@ -236,7 +236,7 @@ class Engine:
         Determines if the game has been won by either the X's or O's
 
         Parameters:
-            - board: a list containing strings indicating the position of the X's and O's
+            - board: A 3x3 list containing values either 'X', 'O', or None
 
         Returns:
             - a boolean value indicating if there is a win or not
@@ -255,28 +255,51 @@ class Engine:
 
         # no win
         return False
-    
-    def win_screen(self) -> None:
-        '''
-        Displays the win screen and handles events to continue or quit play.
 
-        Parameters: None
+    def is_tie(self, board: List[List[str]]) -> bool:
+        '''
+        Determines if there is a tie.
+
+        Parameters:
+            - board: A 3x3 list containing values either 'X', 'O', or None
+
+        Returns:
+            - a boolean value indicating if there is a tie or not.
+        '''
+        for row in board:
+            for col in row:
+                if col is None: return False
+
+        return True
+
+    def game_over_screen(self, win: bool = False) -> None:
+        '''
+        Displays the screen for a tie and handles events to continue or quit play
+
+        Parameters:
+            - win: a boolean value indicating if the game was won or not
 
         Returns: None
         '''
-        # clear screen
-        self.clear_screen()
+        # clear turn text to replace with victory text
+        self.window.fill(self.BG_COLOR, pygame.Rect(self.w * 5 // 12, self.h // 6, self.w // 6, self.h // 24))
+
+        # clear old instruction text to replace with updated instruction text
+        self.window.fill(self.BG_COLOR, pygame.Rect(self.w // 3, self.h * 5 // 6, self.w * 5 // 12, self.h // 24))
 
         # grab correct symbol
         symbol = 'O' if self.turn else 'X'
 
         # render victory text
-        victory = self.victory_font.render(f'{symbol}\'s win!', 1, self.TEXT_COLOR)
-        self.window.blit(victory, (self.w * 1.25 // 3, self.h * .3))
+        if win:
+            victory = self.victory_font.render(f'{symbol}\'s win!', 1, self.TEXT_COLOR)
+        else:
+            victory = self.victory_font.render(f'  Draw!', 1, self.TEXT_COLOR)
+        self.window.blit(victory, (self.w * 9 // 24 + (self.w // 60), self.h // 6))
 
         # render new instruction text
         instruction = self.text_font.render('Press Q to quit - Press \'Enter\' to continue playing', 1, self.TEXT_COLOR)
-        self.window.blit(instruction, (self.w // 4, self.h * .4))
+        self.window.blit(instruction, (self.w // 4, self.h * 5 // 6))
 
         # update display
         display.update()
@@ -301,10 +324,6 @@ class Engine:
                         self.board = [[None for _ in range(3)] for _ in range(3)]
                         self.turn = True
                         self.run_game()
-
-    def is_tie(self) -> bool: pass
-
-    def tie_screen(self) -> None: pass
 
     def run_game(self) -> None:
         '''
@@ -339,8 +358,8 @@ class Engine:
                         # if that square isn't already occupied, draw the necessary shape.
                         if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
             
-            if self.is_win(self.board): self.win_screen()
-            elif self.is_tie(): self.tie_screen()
+            if self.is_win(self.board): self.game_over_screen(win=True)
+            elif self.is_tie(self.board): self.game_over_screen()
 
 if __name__ == '__main__':
     assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
