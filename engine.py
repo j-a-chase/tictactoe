@@ -13,6 +13,8 @@ import pygame
 from pygame import display
 from typing import Tuple, List
 
+import color
+
 class Engine:
     def __init__(self, width: int = 600, height: int = 600) -> None:
         '''
@@ -28,11 +30,11 @@ class Engine:
         pygame.init()
 
         # set game colors
-        self.BG_COLOR = (255, 255, 255)
-        self.BOARD_COLOR = (0, 0, 0)
-        self.X_COLOR = (255, 0, 0)
-        self.O_COLOR = (255, 165, 0)
-        self.TEXT_COLOR = (50, 50, 50)
+        self.BG_COLOR = color.convert_from_hex_string('FFFFFF')
+        self.BOARD_COLOR = color.convert_from_hex_string('000000')
+        self.X_COLOR = color.get_random_color()
+        self.O_COLOR = color.get_random_color()
+        self.TEXT_COLOR = color.get_color('darkgrey')
 
         # display dimensions
         self.w = width
