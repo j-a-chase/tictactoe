@@ -14,6 +14,7 @@ from pygame import display
 from typing import Tuple, List
 
 import color
+from calculations import calculate_coordinates, is_win, is_tie
 
 class Engine:
     def __init__(self, width: int = 600, height: int = 600) -> None:
@@ -124,29 +125,6 @@ class Engine:
         
         display.update()
 
-    def calculate_coordinates(self, x: int, y: int, width: int, height: int) -> Tuple:
-        '''
-        Calculates which grid square the drawing should be placed in depending on what the coordinates provided are.
-
-        Parameters:
-            - x: integer containing the x-value for where the mouse was clicked
-            - y: integer containing the y-value for where the mouse was clicked
-            - width: integer containing the width of the screen
-            - height: integer containing the height of the screen
-
-        Returns:
-            - a tuple containing the corresponding indices for the board list
-        '''
-        row = 0
-        col = 0
-        if x > width * 5 // 12 and x <= width * 7 // 12: col = 1
-        elif x > width * 7 // 12: col = 2
-        
-        if y > height * 5 // 12 and y <= height * 7 // 12: row = 1
-        elif y > height * 7 // 12: row = 2
-
-        return (row, col)
-
     def draw_xo(self, coord: Tuple[int]) -> None:
         '''
         Draws an X or O depending on whose turn it is given the coordinates of the click.
@@ -233,47 +211,6 @@ class Engine:
 
         display.update()
 
-    def is_win(self, board: List[List[str]]) -> bool:
-        '''
-        Determines if the game has been won by either the X's or O's
-
-        Parameters:
-            - board: A 3x3 list containing values either 'X', 'O', or None
-
-        Returns:
-            - a boolean value indicating if there is a win or not
-        '''
-        # check rows
-        for row in board:
-            if row[0] == row[1] == row[2] and row[0] is not None: return True
-
-        # check columns
-        for col in range(3):
-            if board[0][col] == board[1][col] == board[2][col] and board[0][col] is not None: return True
-
-        # check both diagonals
-        if board[0][0] == board[1][1] == board[2][2] and board[0][0] is not None: return True
-        if board[2][0] == board[1][1] == board[0][2] and board[2][0] is not None: return True
-
-        # no win
-        return False
-
-    def is_tie(self, board: List[List[str]]) -> bool:
-        '''
-        Determines if there is a tie.
-
-        Parameters:
-            - board: A 3x3 list containing values either 'X', 'O', or None
-
-        Returns:
-            - a boolean value indicating if there is a tie or not.
-        '''
-        for row in board:
-            for col in row:
-                if col is None: return False
-
-        return True
-
     def game_over_screen(self, win: bool = False) -> None:
         '''
         Displays the screen for a tie and handles events to continue or quit play
@@ -355,13 +292,13 @@ class Engine:
                     # if click inside grid
                     if self.w // 4 <= x <= self.w * 3 // 4 and self.h // 4 <= y <= self.h * 3 // 4:
                         # get coordinates in grid from click
-                        coords = self.calculate_coordinates(x, y, self.w, self.h)
+                        coords = calculate_coordinates(x, y, self.w, self.h)
 
                         # if that square isn't already occupied, draw the necessary shape.
                         if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
             
-            if self.is_win(self.board): self.game_over_screen(win=True)
-            elif self.is_tie(self.board): self.game_over_screen()
+            if is_win(self.board): self.game_over_screen(win=True)
+            elif is_tie(self.board): self.game_over_screen()
 
 if __name__ == '__main__':
     assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
