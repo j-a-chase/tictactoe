@@ -14,10 +14,10 @@ from pygame import display
 from typing import Tuple, List
 
 import color
-from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords
+from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move
 
 class Engine:
-    def __init__(self, width: int = 600, height: int = 600) -> None:
+    def __init__(self, width: int = 600, height: int = 600, comp=True) -> None:
         '''
         Initializes class variables for the game Engine.
 
@@ -55,6 +55,7 @@ class Engine:
 
         # initialize gameplay variables
         self.turn = True
+        self.computer_player = comp
 
         # start game
         self.run_game()
@@ -255,6 +256,11 @@ class Engine:
             
             if is_win(self.board): self.game_over_screen(win=True)
             elif is_tie(self.board): self.game_over_screen()
+
+            if self.computer_player and not self.turn:
+                pygame.time.delay(1000)
+                x_y = computer_move(self.board)
+                self.draw_xo(x_y)
 
 if __name__ == '__main__':
     assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'

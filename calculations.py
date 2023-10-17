@@ -10,6 +10,7 @@
 
 # imports
 from typing import Tuple, List, Dict
+from random import choice
 
 def calculate_coordinates(x: int, y: int, width: int, height: int) -> Tuple:
     '''
@@ -147,6 +148,24 @@ def get_o_coords(w: int, h: int) -> Dict:
         '(2, 1)': [w * 11 // 24, h * 15 // 24],
         '(2, 2)': [w * 15 // 24, h * 15 // 24]
     }
+
+def computer_move(board: List[List[str]]) -> Tuple:
+    '''
+    This function controls the computer's moves if you desire to play with a computer opponent.
+
+    Parameters:
+        - board: a 3x3 list containing either 'X', 'O', or None
+    
+    Returns:
+        - a tuple containing the coordinates where the CPU moved, or None if the CPU has no move available (shouldn't be possible if coded correctly).
+    '''
+    # grab empty squares
+    empties = [(x, y) for x in range(3) for y in range(3) if board[x][y] is None]
+    if empties:
+        x, y = choice(empties)
+        board[x][y] = 'O' # computer will always be O's
+        return (x, y)
+    return None
 
 if __name__ == '__main__':
     assert False, '\n\nThis is a module of functions. Please import its contents into another file.\n'
