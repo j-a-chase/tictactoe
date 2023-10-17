@@ -8,12 +8,13 @@
 #
 ######################################################################################################################################################
 
-# imports
+# external imports
 import pygame
 from pygame import display
 from typing import Tuple
 from win32gui import SetWindowPos
 
+# local imports
 import color
 from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move
 
@@ -66,7 +67,7 @@ class Engine:
     
     def __str__(self) -> str:
         '''
-        Controls how it is handled when object is converted into a string
+        Controls how it is handled when object is converted into a string.
 
         Parameters: None
 
@@ -81,7 +82,7 @@ class Engine:
     
     def __repr__(self) -> str:
         '''
-        Controls how Engine is represented in a more information-rich format
+        Controls how Engine is represented in a more information-rich format.
 
         Parameters: None
 
@@ -104,7 +105,7 @@ class Engine:
 
     def draw_grid(self) -> None:
         '''
-        Draws the tic-tac-toe grid on screen
+        Draws the tic-tac-toe grid on screen.
 
         Parameters: None
 
@@ -137,7 +138,7 @@ class Engine:
         
         display.update()
 
-    def draw_xo(self, coord: Tuple[int]) -> None:
+    def draw_xo(self, coord: Tuple[int, int]) -> None:
         '''
         Draws an X or O depending on whose turn it is given the coordinates of the click.
 
@@ -163,18 +164,19 @@ class Engine:
             # update internal board
             self.board[coord[0]][coord[1]] = 'O'
         
-        # update turn text and display
+        # update turn text
         self.turn = not self.turn
         symbol = 'X' if self.turn else 'O'
         turn_text = self.turn_font.render(f'{symbol}\'s turn.', 1, self.TEXT_COLOR)
         self.window.fill(self.BG_COLOR, pygame.Rect(self.w * 5 // 12, self.h // 6, self.w // 6, self.h // 24))
         self.window.blit(turn_text, (self.w * 5 // 12 + (self.w // 60), self.h // 6))
 
+        # update display
         display.update()
 
     def game_over_screen(self, win: bool = False) -> None:
         '''
-        Displays the screen for a tie and handles events to continue or quit play
+        Displays the screen for a tie and handles events to continue or quit play.
 
         Parameters:
             - win: a boolean value indicating if the game was won or not
@@ -193,7 +195,7 @@ class Engine:
         # render victory text
         if win:
             victory = self.victory_font.render(f'{symbol}\'s win!', 1, self.TEXT_COLOR)
-        else:
+        else: # must be draw
             victory = self.victory_font.render(f'  Draw!', 1, self.TEXT_COLOR)
         self.window.blit(victory, (self.w * 9 // 24 + (self.w // 60), self.h // 6))
 
@@ -233,7 +235,9 @@ class Engine:
 
         Returns: None
         '''
+        # draw tic-tac-toe grid
         self.draw_grid()
+
         while True:
             for event in pygame.event.get():
                 # if application is closed, quit
@@ -258,13 +262,14 @@ class Engine:
                         # if that square isn't already occupied, draw the necessary shape.
                         if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
             
+            # check for a win or tie
             if is_win(self.board): self.game_over_screen(win=True)
             elif is_tie(self.board): self.game_over_screen()
 
+            # if computer play is enabled, perform computer move after human move
             if self.computer_player and not self.turn:
                 pygame.time.delay(1000)
                 x_y = computer_move(self.board)
                 self.draw_xo(x_y)
 
-if __name__ == '__main__':
-    assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
+if __name__ == '__main__': assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'

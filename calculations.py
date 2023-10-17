@@ -12,7 +12,7 @@
 from typing import Tuple, List, Dict
 from random import choice
 
-def calculate_coordinates(x: int, y: int, width: int, height: int) -> Tuple:
+def calculate_coordinates(x: int, y: int, width: int, height: int) -> Tuple[int, int]:
     '''
     Calculates which grid square the drawing should be placed in depending on what the coordinates provided are.
 
@@ -25,14 +25,19 @@ def calculate_coordinates(x: int, y: int, width: int, height: int) -> Tuple:
     Returns:
         - a tuple containing the corresponding indices for the board list
     '''
+    # initialize row, col to (0, 0)
     row = 0
     col = 0
+    
+    # if click is in the second or third column, update accordingly
     if x > width * 5 // 12 and x <= width * 7 // 12: col = 1
     elif x > width * 7 // 12: col = 2
     
+    # if click is in the second or third row, update accordingly
     if y > height * 5 // 12 and y <= height * 7 // 12: row = 1
     elif y > height * 7 // 12: row = 2
 
+    # return new coordinates
     return (row, col)
 
 def is_win(board: List[List[str]]) -> bool:
@@ -70,13 +75,15 @@ def is_tie(board: List[List[str]]) -> bool:
     Returns:
         - a boolean value indicating if there is a tie or not.
     '''
+    # check if a valid move still exists
     for row in board:
         for col in row:
             if col is None: return False
 
+    # if no valid moves (we already know it's not a win if this function is being called), return True
     return True
 
-def get_x_coords(w: int, h: int) -> Dict:
+def get_x_coords(w: int, h: int) -> Dict[str, List[Tuple[int, int]]]:
     '''
     Returns the dictionary containing values for drawing an 'X'
 
@@ -126,7 +133,7 @@ def get_x_coords(w: int, h: int) -> Dict:
                     (w * 15 // 24, h * 17 // 24)]
     }
 
-def get_o_coords(w: int, h: int) -> Dict:
+def get_o_coords(w: int, h: int) -> Dict[str, List[Tuple[int, int]]]:
     '''
     Returns the dictionary containing values for drawing an 'O'
 
@@ -149,7 +156,7 @@ def get_o_coords(w: int, h: int) -> Dict:
         '(2, 2)': [w * 15 // 24, h * 15 // 24]
     }
 
-def computer_move(board: List[List[str]]) -> Tuple:
+def computer_move(board: List[List[str]]) -> Tuple[int, int]:
     '''
     This function controls the computer's moves if you desire to play with a computer opponent.
 
@@ -161,11 +168,19 @@ def computer_move(board: List[List[str]]) -> Tuple:
     '''
     # grab empty squares
     empties = [(x, y) for x in range(3) for y in range(3) if board[x][y] is None]
+
+    # if empty squares exist (might not need this check...)
     if empties:
+        # pick a random square
         x, y = choice(empties)
+
+        # update internal board
         board[x][y] = 'O' # computer will always be O's
+
+        # return indices to update GUI
         return (x, y)
+    
+    # return None if no move exists (again, probably don't need this)
     return None
 
-if __name__ == '__main__':
-    assert False, '\n\nThis is a module of functions. Please import its contents into another file.\n'
+if __name__ == '__main__': assert False, '\n\nThis is a module of functions. Please import its contents into another file.\n'
