@@ -47,6 +47,8 @@ class Engine:
 
         # initialize fonts
         self.text_font = pygame.font.SysFont('timesnewroman', 15)
+        self.turn_font = pygame.font.SysFont('timesnewroman', 25)
+        self.victory_font = pygame.font.SysFont('timesnewroman', 40)
 
         # initialize gameplay variables
         self.turn = True
@@ -114,6 +116,9 @@ class Engine:
         
         instruction_text = self.text_font.render('Click to place X or O - Q to quit', 1, self.TEXT_COLOR)
         self.window.blit(instruction_text, (self.w // 3, self.h * 5 // 6))
+
+        turn_text = self.turn_font.render('X\'s turn.', 1, self.TEXT_COLOR)
+        self.window.blit(turn_text, (self.w * 5 // 12 + (self.w // 60), self.h // 6))
         
         display.update()
 
@@ -217,8 +222,13 @@ class Engine:
             # update internal board
             self.board[coord[0]][coord[1]] = 'O'
         
-        # change who's turn it is and update display
+        # update turn text and display
         self.turn = not self.turn
+        symbol = 'X' if self.turn else 'O'
+        turn_text = self.turn_font.render(f'{symbol}\'s turn.', 1, self.TEXT_COLOR)
+        self.window.fill(self.BG_COLOR, pygame.Rect(self.w * 5 // 12, self.h // 6, self.w // 8, self.h // 24))
+        self.window.blit(turn_text, (self.w * 5 // 12 + (self.w // 60), self.h // 6))
+        
         display.update()
 
     def is_win(self, board: List[List[str]]) -> bool:
@@ -246,7 +256,51 @@ class Engine:
         # no win
         return False
     
-    def win_screen(self) -> None: pass
+    def win_screen(self) -> None:
+        '''
+        Displays the win screen and handles events to continue or quit play.
+
+        Parameters: None
+
+        Returns: None
+        '''
+        # clear screen
+        self.clear_screen()
+
+        # grab correct symbol
+        symbol = 'O' if self.turn else 'X'
+
+        # render victory text
+        victory = self.victory_font.render(f'{symbol}\'s win!', 1, self.TEXT_COLOR)
+        self.window.blit(victory, (self.w * 1.25 // 3, self.h * .3))
+
+        # render new instruction text
+        instruction = self.text_font.render('Press Q to quit - Press \'Enter\' to continue playing', 1, self.TEXT_COLOR)
+        self.window.blit(instruction, (self.w // 4, self.h * .4))
+
+        # update display
+        display.update()
+
+        # handle events
+        while True:
+            for event in pygame.event.get():
+                # quit if window closed
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit(0)
+                
+                # handle keypresses
+                if event.type == pygame.KEYDOWN:
+                    # quit if Q is pressed
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        exit(0)
+                    
+                    # start a new game if 'Enter' is pressed
+                    if event.key == pygame.K_RETURN:
+                        self.board = [[None for _ in range(3)] for _ in range(3)]
+                        self.turn = True
+                        self.run_game()
 
     def is_tie(self) -> bool: pass
 
