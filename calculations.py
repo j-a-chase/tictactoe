@@ -9,7 +9,7 @@
 ######################################################################################################################################################
 
 # imports
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 def calculate_coordinates(x: int, y: int, width: int, height: int) -> Tuple:
     '''
@@ -74,6 +74,79 @@ def is_tie(board: List[List[str]]) -> bool:
             if col is None: return False
 
     return True
+
+def get_x_coords(w: int, h: int) -> Dict:
+    '''
+    Returns the dictionary containing values for drawing an 'X'
+
+    Parameters:
+        - w: integer containing the width of the screen
+        - h: integer containing the height of the screen
+
+    Returns:
+        - a dictionary containing values for drawing an 'X'
+    '''
+    return {
+        '(0, 0)': [(w * 7 // 24, h * 7 // 24),
+                    (w * 9 // 24, h * 9 // 24),
+                    (w * 9 // 24, h * 7 // 24),
+                    (w * 7 // 24, h * 9 // 24)],
+        '(0, 1)': [(w * 11 // 24, h * 7 // 24),
+                    (w * 13 // 24, h * 9 // 24),
+                    (w * 13 // 24, h * 7 // 24),
+                    (w * 11 // 24, h * 9 // 24)],
+        '(0, 2)': [(w * 15 // 24, h * 7 // 24),
+                    (w * 17 // 24, h * 9 // 24),
+                    (w * 17 // 24, h * 7 // 24),
+                    (w * 15 // 24, h * 9 // 24)],
+        '(1, 0)': [(w * 7 // 24, h * 11 // 24),
+                    (w * 9 // 24, h * 13 // 24),
+                    (w * 9 // 24, h * 11 // 24),
+                    (w * 7 // 24, h * 13 // 24)],
+        '(1, 1)': [(w * 11 // 24, h * 11 // 24),
+                    (w * 13 // 24, h * 13 // 24),
+                    (w * 13 // 24, h * 11 // 24),
+                    (w * 11 // 24, h * 13 // 24)],
+        '(1, 2)': [(w * 15 // 24, h * 11 // 24),
+                    (w * 17 // 24, h * 13 // 24),
+                    (w * 17 // 24, h * 11 // 24),
+                    (w * 15 // 24, h * 13 // 24)],
+        '(2, 0)': [(w * 7 // 24, h * 15 // 24),
+                    (w * 9 // 24, h * 17 // 24),
+                    (w * 9 // 24, h * 15 // 24),
+                    (w * 7 // 24, h * 17 // 24)],
+        '(2, 1)': [(w * 11 // 24, h * 15 // 24),
+                    (w * 13 // 24, h * 17 // 24),
+                    (w * 13 // 24, h * 15 // 24),
+                    (w * 11 // 24, h * 17 // 24)],
+        '(2, 2)': [(w * 15 // 24, h * 15 // 24),
+                    (w * 17 // 24, h * 17 // 24),
+                    (w * 17 // 24, h * 15 // 24),
+                    (w * 15 // 24, h * 17 // 24)]
+    }
+
+def get_o_coords(w: int, h: int) -> Dict:
+    '''
+    Returns the dictionary containing values for drawing an 'O'
+
+    Parameters:
+        - w: integer containing the width of the screen
+        - h: integer containing the height of the screen
+
+    Returns:
+        - a dictionary containing values for drawing an 'X'
+    '''
+    return {
+        '(0, 0)': [w * 7 // 24, h * 7 // 24],
+        '(0, 1)': [w * 11 // 24, h * 7 // 24],
+        '(0, 2)': [w * 15 // 24, h * 7 // 24],
+        '(1, 0)': [w * 7 // 24, h * 11 // 24],
+        '(1, 1)': [w * 11 // 24, h * 11 // 24],
+        '(1, 2)': [w * 15 // 24, h * 11 // 24],
+        '(2, 0)': [w * 7 // 24, h * 15 // 24],
+        '(2, 1)': [w * 11 // 24, h * 15 // 24],
+        '(2, 2)': [w * 15 // 24, h * 15 // 24]
+    }
 
 if __name__ == '__main__':
     assert False, '\n\nThis is a module of functions. Please import its contents into another file.\n'

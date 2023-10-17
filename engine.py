@@ -14,7 +14,7 @@ from pygame import display
 from typing import Tuple, List
 
 import color
-from calculations import calculate_coordinates, is_win, is_tie
+from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords
 
 class Engine:
     def __init__(self, width: int = 600, height: int = 600) -> None:
@@ -68,6 +68,7 @@ class Engine:
         Returns:
             - A string representing the tic-tac-toe grid
         '''
+        # organizes the board as a 3x3 list
         s = ''
         for row in self.board:
             s += str(row) + '\n'
@@ -82,11 +83,12 @@ class Engine:
         Returns:
             - A string explaining the Engine class object
         '''
+        # include class information
         return f'{__class__}\n{self.__str__()}'
     
     def clear_screen(self) -> None:
         '''
-        Paints the screen the color of the background.
+        Paints the whole screen the color of the background.
 
         Parameters: None
 
@@ -103,7 +105,10 @@ class Engine:
 
         Returns: None
         '''
+        # make sure screen is cleared
         self.clear_screen()
+
+        # draw grid lines
         pygame.draw.line(self.window, self.BOARD_COLOR,
                             (self.w * 3 // 12, self.h * 5 // 12),
                             (self.w * 9 // 12, self.h * 5 // 12), 7)
@@ -117,9 +122,11 @@ class Engine:
                             (self.w * 7 // 12, self.h * 3 // 12),
                             (self.w * 7 // 12, self.h * 9 // 12), 7)
         
+        # render instruction text
         instruction_text = self.text_font.render('Click to place X or O - Q to quit', 1, self.TEXT_COLOR)
         self.window.blit(instruction_text, (self.w // 3, self.h * 5 // 6))
 
+        # render text indicating whose turn it is
         turn_text = self.turn_font.render('X\'s turn.', 1, self.TEXT_COLOR)
         self.window.blit(turn_text, (self.w * 5 // 12 + (self.w // 60), self.h // 6))
         
@@ -134,68 +141,17 @@ class Engine:
 
         Returns: None
         '''
-        # dictionary holding the necessary coordinate values for drawing an 'X'
-        x_coords = {
-            '(0, 0)': [(self.w * 7 // 24, self.h * 7 // 24),
-                       (self.w * 9 // 24, self.h * 9 // 24),
-                       (self.w * 9 // 24, self.h * 7 // 24),
-                       (self.w * 7 // 24, self.h * 9 // 24)],
-            '(0, 1)': [(self.w * 11 // 24, self.h * 7 // 24),
-                       (self.w * 13 // 24, self.h * 9 // 24),
-                       (self.w * 13 // 24, self.h * 7 // 24),
-                       (self.w * 11 // 24, self.h * 9 // 24)],
-            '(0, 2)': [(self.w * 15 // 24, self.h * 7 // 24),
-                       (self.w * 17 // 24, self.h * 9 // 24),
-                       (self.w * 17 // 24, self.h * 7 // 24),
-                       (self.w * 15 // 24, self.h * 9 // 24)],
-            '(1, 0)': [(self.w * 7 // 24, self.h * 11 // 24),
-                       (self.w * 9 // 24, self.h * 13 // 24),
-                       (self.w * 9 // 24, self.h * 11 // 24),
-                       (self.w * 7 // 24, self.h * 13 // 24)],
-            '(1, 1)': [(self.w * 11 // 24, self.h * 11 // 24),
-                       (self.w * 13 // 24, self.h * 13 // 24),
-                       (self.w * 13 // 24, self.h * 11 // 24),
-                       (self.w * 11 // 24, self.h * 13 // 24)],
-            '(1, 2)': [(self.w * 15 // 24, self.h * 11 // 24),
-                       (self.w * 17 // 24, self.h * 13 // 24),
-                       (self.w * 17 // 24, self.h * 11 // 24),
-                       (self.w * 15 // 24, self.h * 13 // 24)],
-            '(2, 0)': [(self.w * 7 // 24, self.h * 15 // 24),
-                       (self.w * 9 // 24, self.h * 17 // 24),
-                       (self.w * 9 // 24, self.h * 15 // 24),
-                       (self.w * 7 // 24, self.h * 17 // 24)],
-            '(2, 1)': [(self.w * 11 // 24, self.h * 15 // 24),
-                       (self.w * 13 // 24, self.h * 17 // 24),
-                       (self.w * 13 // 24, self.h * 15 // 24),
-                       (self.w * 11 // 24, self.h * 17 // 24)],
-            '(2, 2)': [(self.w * 15 // 24, self.h * 15 // 24),
-                       (self.w * 17 // 24, self.h * 17 // 24),
-                       (self.w * 17 // 24, self.h * 15 // 24),
-                       (self.w * 15 // 24, self.h * 17 // 24)]
-        }
-
-        # dictionary holding the necessary coordinate values for drawing an 'O'
-        o_coords = {
-            '(0, 0)': [self.w * 7 // 24, self.h * 7 // 24],
-            '(0, 1)': [self.w * 11 // 24, self.h * 7 // 24],
-            '(0, 2)': [self.w * 15 // 24, self.h * 7 // 24],
-            '(1, 0)': [self.w * 7 // 24, self.h * 11 // 24],
-            '(1, 1)': [self.w * 11 // 24, self.h * 11 // 24],
-            '(1, 2)': [self.w * 15 // 24, self.h * 11 // 24],
-            '(2, 0)': [self.w * 7 // 24, self.h * 15 // 24],
-            '(2, 1)': [self.w * 11 // 24, self.h * 15 // 24],
-            '(2, 2)': [self.w * 15 // 24, self.h * 15 // 24]
-        }
-
         if self.turn: # 'X'
-            shape = x_coords[str(coord)]
+            # get shape coordinates from dictionary holding the necessary coordinate values for drawing an 'X'
+            shape = get_x_coords(self.w, self.h)[str(coord)]
             pygame.draw.line(self.window, self.X_COLOR, shape[0], shape[1], 3)
             pygame.draw.line(self.window, self.X_COLOR, shape[2], shape[3], 3)
 
             # update internal board
             self.board[coord[0]][coord[1]] = 'X'
         else: # 'O'
-            shape = o_coords[str(coord)]
+            # get shape coordinates from dictionary holding the necessary coordinate values for drawing an 'O'
+            shape = get_o_coords(self.w, self.h)[str(coord)]
             pygame.draw.ellipse(self.window, self.O_COLOR,
                                 pygame.Rect(shape[0], shape[1], self.w // 12, self.h // 12), 3)
             
