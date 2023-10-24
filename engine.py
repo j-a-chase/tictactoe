@@ -238,7 +238,7 @@ class Engine:
         '''
         endpoints = calculate_victory_line(win_line, self.w, self.h)
         color = self.X_COLOR if not self.turn else self.O_COLOR
-        pygame.draw.line(self.window, color, (endpoints[0][0], endpoints[0][1]), (endpoints[1][0], endpoints[1][1]))
+        pygame.draw.line(self.window, color, (endpoints[0][0], endpoints[0][1]), (endpoints[1][0], endpoints[1][1]), 5)
         display.update()
 
     def run_game(self) -> None:
