@@ -10,6 +10,7 @@
 
 # imports
 from engine import Engine
+from inputs import multiplayer, difficulty
 
 def main() -> None:
     '''
@@ -19,20 +20,12 @@ def main() -> None:
 
     Returns: None
     '''
-    # default to computer being active
-    computer = True
+    # determine if the game is multiplayer or not
+    computer_player = not multiplayer()
 
-    # loop until valid input is given
-    while True:
-        try:
-            player_mode = int(input('One or two players? [1 / 2]: '))
-        except ValueError:
-            player_mode = 0
-        if player_mode == 1 or player_mode == 2: break
-    
-    # set computer to False if 2-player is selected
-    if player_mode == 2: computer = False
-    Engine(comp=computer)
+    # start game
+    if computer_player: Engine(comp = computer_player, difficulty = difficulty())
+    else: Engine(comp = computer_player)
 
 # run program
 if __name__ == '__main__': main()
