@@ -314,9 +314,10 @@ def calculate_victory_line(win_list: List[Tuple[int, int]], w: int, h: int) -> T
     Returns:
         - a tuple of coordinates for the victory line to be drawn at.
     '''
-    
+    # convert starting and ending tuples to strings
     start, end = str(win_list[0]), str(win_list[2])
 
+    # if row win
     if win_list[0][0] == win_list[2][0]:
         pos = {
             '(0, 0)': [w * 7 // 24, h // 3],
@@ -326,6 +327,7 @@ def calculate_victory_line(win_list: List[Tuple[int, int]], w: int, h: int) -> T
             '(2, 0)': [w * 7 // 24, h * 2 // 3],
             '(2, 2)': [w * 17 // 24, h * 2 // 3]
         }
+    # if col win
     elif win_list[0][1] == win_list[2][1]:
         pos = {
             '(0, 0)': [w // 3, h * 7 // 24],
@@ -335,6 +337,7 @@ def calculate_victory_line(win_list: List[Tuple[int, int]], w: int, h: int) -> T
             '(0, 2)': [w * 2 // 3, h * 7 // 24],
             '(2, 2)': [w * 2 // 3, h * 17 // 24]
         }
+    # else diagonal win
     else:
         pos = {
             '(0, 0)': [w * 7 // 24, h * 7 // 24],
@@ -343,6 +346,7 @@ def calculate_victory_line(win_list: List[Tuple[int, int]], w: int, h: int) -> T
             '(0, 2)': [w * 17 // 24, h * 7 // 24]
         }
 
+    # return drawing coordinates
     return pos[start], pos[end]
 
 if __name__ == '__main__': assert False, '\n\nThis is a module of functions. Please import its contents into another file.\n'
