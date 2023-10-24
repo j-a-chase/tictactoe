@@ -286,7 +286,7 @@ class Engine:
 
             # if computer play is enabled, perform computer move after human move
             if self.computer_player and not self.turn:
-                pygame.time.delay(1000)
+                pygame.time.delay(500)
                 if self.difficulty == 0: x_y = computer_move(self.board)
                 else: x_y = ai_computer_move(self.board, self.difficulty)
                 self.draw_xo(x_y)
