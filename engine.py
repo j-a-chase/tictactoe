@@ -16,10 +16,10 @@ from win32gui import SetWindowPos
 
 # local imports
 import color
-from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move, calculate_victory_line
+from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move, calculate_victory_line, ai_computer_move
 
 class Engine:
-    def __init__(self, width: int = 600, height: int = 600, comp=True) -> None:
+    def __init__(self, width: int = 600, height: int = 600, comp=True, difficulty=1) -> None:
         '''
         Initializes class variables for the game Engine.
 
@@ -61,6 +61,7 @@ class Engine:
         # initialize gameplay variables
         self.turn = True
         self.computer_player = comp
+        self.difficulty = difficulty
 
         # start game
         self.run_game()
@@ -286,7 +287,8 @@ class Engine:
             # if computer play is enabled, perform computer move after human move
             if self.computer_player and not self.turn:
                 pygame.time.delay(1000)
-                x_y = computer_move(self.board)
+                if self.difficulty == 0: x_y = computer_move(self.board)
+                else: x_y = ai_computer_move(self.board)
                 self.draw_xo(x_y)
 
 if __name__ == '__main__': assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'
