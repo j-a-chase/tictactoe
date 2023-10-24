@@ -288,7 +288,7 @@ class Engine:
             if self.computer_player and not self.turn:
                 pygame.time.delay(1000)
                 if self.difficulty == 0: x_y = computer_move(self.board)
-                else: x_y = ai_computer_move(self.board)
+                else: x_y = ai_computer_move(self.board, self.difficulty)
                 self.draw_xo(x_y)
 
 if __name__ == '__main__': assert False, f'\n\nThis is a class file and its contents are meant to be imported into another file.\n'

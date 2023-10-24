@@ -183,6 +183,125 @@ def computer_move(board: List[List[str]]) -> Tuple[int, int]:
     # return None if no move exists (again, probably don't need this)
     return None
 
+def ai_computer_move(board: List[List[str]], dif: int) -> Tuple[int, int]:
+    '''
+    Controls the computer's moves using a simple minimax algorithm.
+
+    Parameters:
+        - board: a 3x3 list containing either 'X', 'O', or None
+        - dif: an integer indicating the strength of the heuristic function (1: normal, >=2: impossible)
+
+    Returns:
+        - a tuple containing the coordinates where the CPU moved
+    '''
+    def heuristic_eval(board: List[List[str]]) -> int:
+        '''
+        A heuristic function to weight the moves of the computer AI.
+
+        Parameters:
+            - board: a 3x3 list indicating the current board state given the computer's move to a particular square.
+
+        Returns:
+            - an integer indicating the heuristic score for the computer if it would make a particular move.
+        '''
+        # initial score of zero
+        score = 0
+
+        # array of valid wins
+        valid_wins = [
+            [(0, 0), (0, 1), (0, 2)],
+            [(1, 0), (1, 1), (1, 2)],
+            [(2, 0), (2, 1), (2, 2)],
+            [(0, 0), (1, 0), (2, 0)],
+            [(0, 1), (1, 1), (2, 1)],
+            [(0, 2), (1, 2), (2, 2)],
+            [(0, 0), (1, 1), (2, 2)],
+            [(0, 2), (1, 1), (2, 0)]
+        ]
+
+        # for each win case, weight scores accordingly
+        for win in valid_wins:
+
+            # grabs 'current' board state for each win state ('current' is technically the case of if the bot has moved, but it hasn't yet)
+            line = [board[row][col] for row, col in win]
+
+            # if win, weight score heavily
+            if line.count('O') == 3: score += 50
+            # if blocking opponent win, weight heavily
+            elif line.count('X') == 2 and line.count('O') == 1: score += 15
+            # if play is made in the lane of opponent, increase score (blocks them from winning that lane)
+            elif line.count('X') == 1 and line.count('O') == 1: score += 7
+            # if play is in an empty lane, increase score slightly
+            elif line.count('O') == 1 and line.count(None) == 2: score += 4
+            # if opponent has dominance of a lane, increase score more slightly
+            elif line.count('X') == 1 and line.count(None) == 2: score += 3
+
+        # increase score of middle if available
+        if board[1][1] == 'O': score += 6
+
+        # store boolean values for if the opposing corner is open
+        opp_corners = [
+            board[0][0] == 'O' and board[2][2] is None,
+            board[0][2] == 'O' and board[2][0] is None,
+            board[2][0] == 'O' and board[0][2] is None,
+            board[2][2] == 'O' and board[0][0] is None
+        ]
+        human_corners = [
+            board[0][0] == 'X' and board[2][2] is None,
+            board[0][2] == 'X' and board[2][0] is None,
+            board[2][0] == 'X' and board[0][2] is None,
+            board[2][2] == 'X' and board[0][0] is None
+        ]
+
+        # adjust score for opposing corners
+        for o in opp_corners:
+            if o: score += 5
+        for x in human_corners:
+            if x: score -= 5
+
+        # if a corner is controlled, adjust score
+        for row, col in [(0,0), (0, 2), (2, 0), (2, 2)]:
+            if board[row][col] == 'O': score += 4
+            elif board[row][col] == 'X': score -= 4
+        
+        # if an edge is controlled, adjust score
+        for row, col in [(0, 1), (1, 0), (1, 2), (2, 1)]:
+            if board[row][col] == 'O': score += 3
+            elif board[row][col] == 'X': score -= 3
+
+        # return score
+        return score
+    
+    # initialize move and score to dummy values
+    move = None
+    score = -1
+    
+    # for each square
+    for row in range(3):
+        for col in range(3):
+            # if it's empty
+            if board[row][col] is None:
+                # temporarily fill as if CPU would move there
+                board[row][col] = 'O'
+                
+                # evaluate the score of moving to that position
+                evaluation = heuristic_eval(board)
+
+                # if impossible difficulty selected, weight blocking an opposite corner fork more, making the bot unbeatable.
+                if dif > 1 and board[0][0] == board[2][2] == 'X' or board[2][0] == board[0][2] == 'X':
+                    if (row, col) in [(0, 1), (1, 0), (1, 2), (2, 1)]: evaluation += 11
+                
+                # backtrack move
+                board[row][col] = None
+
+                # if current square's heuristic is higher, update accordingly
+                if evaluation > score:
+                    score = evaluation
+                    move = (row, col)
+
+    # return CPU's move
+    return move
+
 def calculate_victory_line(win_list: List[Tuple[int, int]], w: int, h: int) -> Tuple[List[int], List[int]]:
     '''
     This function calculates the needed coordinates to draw a line on the victory path on the grid.
