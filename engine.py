@@ -11,12 +11,12 @@
 # external imports
 import pygame
 from pygame import display
-from typing import Tuple
+from typing import Tuple, List
 from win32gui import SetWindowPos
 
 # local imports
 import color
-from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move
+from calculations import calculate_coordinates, is_win, is_tie, get_x_coords, get_o_coords, computer_move, calculate_victory_line
 
 class Engine:
     def __init__(self, width: int = 600, height: int = 600, comp=True) -> None:
@@ -227,6 +227,20 @@ class Engine:
                         self.turn = True
                         self.run_game()
 
+    def draw_win_line(self, win_line: List[Tuple[int, int]]) -> None:
+        '''
+        Draws a line on the winning row, column, or diagonal
+
+        Parameters:
+            - win_line: a List containing integer coordinates that indicate the endpoints of the line to draw
+
+        Returns: None
+        '''
+        endpoints = calculate_victory_line(win_line, self.w, self.h)
+        color = self.X_COLOR if not self.turn else self.O_COLOR
+        pygame.draw.line(self.window, color, (endpoints[0][0], endpoints[0][1]), (endpoints[1][0], endpoints[1][1]))
+        display.update()
+
     def run_game(self) -> None:
         '''
         Main function that runs the tic-tac-toe game.
@@ -263,7 +277,10 @@ class Engine:
                         if not self.board[coords[0]][coords[1]]: self.draw_xo(coords)
             
             # check for a win or tie
-            if is_win(self.board): self.game_over_screen(win=True)
+            winner, _win_line = is_win(self.board)
+            if winner:
+                self.draw_win_line(_win_line)
+                self.game_over_screen(win=True)
             elif is_tie(self.board): self.game_over_screen()
 
             # if computer play is enabled, perform computer move after human move
